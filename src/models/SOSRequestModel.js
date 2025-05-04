@@ -53,9 +53,6 @@ const sosSchema = new mongoose.Schema({
     default: 'active',
   },
 
-  roomId: {
-    type: String, // e.g. 'room_user123_driver456'
-  },
 
 
   

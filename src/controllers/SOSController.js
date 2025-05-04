@@ -7,7 +7,7 @@ import { createResponse } from '../utils/responseHelper.js'
 // POST /api/sos
 export const SOSRequest = async (req, res) => {
   try {
-    const { latitude, longitude, roomId} = req.body
+    const { latitude, longitude} = req.body
     const user = req.user
 
     console.log(user);
@@ -106,7 +106,7 @@ export const SOSRequest = async (req, res) => {
             type: 'Point',
             coordinates: [hospitalLng, hospitalLat],
           },
-          roomId: roomId,
+
           driverPhone: driver.phone,
           userPhone: user.phone
         });
@@ -234,7 +234,7 @@ export const getDriverAssignment = async (req, res) => {
       });
     }
 
-    const { userLocation, userId, hospitalLocation, roomId } = assignment;
+    const { userLocation, userId, hospitalLocation } = assignment;
 
     res.status(200).json({
       success: true,
@@ -247,7 +247,7 @@ export const getDriverAssignment = async (req, res) => {
       name: userId.name,
       phone: userId.phone,
       address: userId.address,
-      roomId: roomId
+
     });
   } catch (error) {
     console.log(error);
@@ -268,7 +268,7 @@ export const getActiveSOSRequest = async (req, res) => {
       {
         userId: userId,
         status: 'active',
-        roomId: roomId
+
       }
     )
 
@@ -284,4 +284,36 @@ export const getActiveSOSRequest = async (req, res) => {
     return res.status(500).json(createResponse(true, 'Server error', [], ''))
   }
 
+};
+
+export const getUsersByHospital = async (req, res) => {
+  try {
+    const hospitalId = req.params.hospitalId; // e.g., /api/v1/hospital/:hospitalId/users
+
+    if (!hospitalId) {
+      return res.status(400).json({ message: 'Hospital ID is required' });
+    }
+
+    // Find SOS records linked to the hospital
+    const sosRecords = await SOS.find({
+      hospitalId: hospitalId,
+      status: 'active', // only active
+    })
+      .populate('userId', 'name phone address') // get specific fields from User
+      .select('userId userLocation hospitalLocation');
+
+    // Format data
+    const users = sosRecords.map((record) => ({
+      name: record.userId.name,
+      phone: record.userId.phone,
+      address: record.userId.address,
+      userLocation: record.userLocation?.coordinates || [],
+      hospitalLocation: record.hospitalLocation?.coordinates || [],
+    }));
+
+    return res.status(200).json({ success: true, users });
+  } catch (error) {
+    console.error('Error fetching users by hospital:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 };

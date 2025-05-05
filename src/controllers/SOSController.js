@@ -234,7 +234,7 @@ export const getDriverAssignment = async (req, res) => {
       });
     }
 
-    const { userLocation, userId, hospitalLocation } = assignment;
+    const { userLocation, userId, hospitalLocation, name, phone, address } = assignment;
 
     res.status(200).json({
       success: true,
@@ -244,9 +244,9 @@ export const getDriverAssignment = async (req, res) => {
       lng: userLocation.coordinates[0],
       hospitalLat: hospitalLocation.coordinates[1],
       hospitalLng: hospitalLocation.coordinates[0],
-      name: userId.name,
-      phone: userId.phone,
-      address: userId.address,
+      name,
+      phone,
+      address,
 
     });
   } catch (error) {

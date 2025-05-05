@@ -272,6 +272,7 @@ export const getActiveSOSRequest = async (req, res) => {
       status: 'active',
     }).populate({
       path: 'driverId',
+      model: 'User',
       select: 'phone', // Only fetch the phone number
     });
 

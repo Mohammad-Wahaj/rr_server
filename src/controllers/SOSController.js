@@ -239,7 +239,9 @@ export const getDriverAssignment = async (req, res) => {
     const driver = await User.findById(driverId).select('phone');  // Query the User model by driverId and select only the phone field
 
 
-    const { userLocation, userId, hospitalLocation } = assignment;
+    const { userLocation, userId, hospitalLocation,  } = assignment;
+
+    const user = await User.findById(userId).select('phone address name');
 
     res.status(200).json({
       success: true,
@@ -250,6 +252,8 @@ export const getDriverAssignment = async (req, res) => {
       hospitalLat: hospitalLocation.coordinates[1],
       hospitalLng: hospitalLocation.coordinates[0],
       phone: driver.phone,
+      name: user.name,
+      address: user.address
      
 
     });

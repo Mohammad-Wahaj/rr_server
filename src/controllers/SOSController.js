@@ -264,43 +264,32 @@ export const getDriverAssignment = async (req, res) => {
 };
 
 export const getActiveSOSRequest = async (req, res) => {
-  const userId = req.user._id
-
+  const userId = req.user._id;
 
   try {
-    const existingRequest = await SOS.findOne(
-      {
-        userId: userId,
-        status: 'active',
+    const existingRequest = await SOS.findOne({
+      userId: userId,
+      status: 'active',
+    }).populate({
+      path: 'driverId',
+      select: 'phone', // Only fetch the phone number
+    });
 
-      }
-    )
-
-        // If there's an active SOS request, get the driverId from the request
-    const driverId = existingRequest.driverId;
-
-    // Find the driver's details using the driverId
-    const driver = await User.findById(driverId).select('phone');
-
-    if (!driver) {
-      return res.status(404).json(createResponse(false, 'Driver not found', [], ''));
+    if (!existingRequest) {
+      return res
+        .status(404)
+        .json(createResponse(false, 'No active SOS request found', [], ''));
     }
 
-    // Add the driver's phone number to the SOS request data
-    existingRequest.phone = driver.phone;
-
-    
     return res
-        .status(200)
-        .json(createResponse(true, 'success', [existingRequest], ''))
-
-
+      .status(200)
+      .json(createResponse(true, 'success', [existingRequest], ''));
   } catch (error) {
     console.log(error);
-    
-    return res.status(500).json(createResponse(true, 'Server error', [], ''))
+    return res
+      .status(500)
+      .json(createResponse(false, 'Server error', [], ''));
   }
-
 };
 
 export const getUsersByHospital = async (req, res) => {

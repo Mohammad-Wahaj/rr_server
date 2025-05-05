@@ -276,6 +276,19 @@ export const getActiveSOSRequest = async (req, res) => {
       }
     )
 
+        // If there's an active SOS request, get the driverId from the request
+    const driverId = existingRequest.driverId;
+
+    // Find the driver's details using the driverId
+    const driver = await User.findById(driverId).select('phone');
+
+    if (!driver) {
+      return res.status(404).json(createResponse(false, 'Driver not found', [], ''));
+    }
+
+    // Add the driver's phone number to the SOS request data
+    existingRequest.phone = driver.phone;
+
     
     return res
         .status(200)

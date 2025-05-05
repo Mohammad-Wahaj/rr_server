@@ -288,7 +288,7 @@ export const getActiveSOSRequest = async (req, res) => {
     console.log(error);
     return res
       .status(500)
-      .json(createResponse(false, 'Server error', [error], ''));
+      .json(createResponse(false, 'Server error', [], error));
   }
 };
 

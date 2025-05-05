@@ -219,6 +219,8 @@ export const getDriverAssignment = async (req, res) => {
   const driverId = req.user._id;
 
   try {
+
+
     const assignment = await SOS.findOne({
       driverId,
       status: 'active'
@@ -234,6 +236,9 @@ export const getDriverAssignment = async (req, res) => {
       });
     }
 
+    const driver = await User.findById(driverId).select('phone');  // Query the User model by driverId and select only the phone field
+
+
     const { userLocation, userId, hospitalLocation } = assignment;
 
     res.status(200).json({
@@ -244,7 +249,7 @@ export const getDriverAssignment = async (req, res) => {
       lng: userLocation.coordinates[0],
       hospitalLat: hospitalLocation.coordinates[1],
       hospitalLng: hospitalLocation.coordinates[0],
-      phone: userId.phone,
+      phone: driver.phone,
      
 
     });

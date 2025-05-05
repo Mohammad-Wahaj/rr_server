@@ -16,6 +16,6 @@ router.post('/updateUserLocation', protect, updateUserLocation)
 router.get('/findNearest', findNearest)
 router.get('/getDriverAssignment', protect, getDriverAssignment)
 router.get('/getActiveSOSRequest', protect, getActiveSOSRequest)
-router.get('/hospital/:hospitalId/users', protect, getUsersByHospital)
+router.get('/hospital/:hospitalId/users', getUsersByHospital)
 
 export default router

@@ -223,8 +223,8 @@ export const getDriverAssignment = async (req, res) => {
       driverId,
       status: 'active'
     })
-    .sort({ createdAt: -1 }) // latest
-    .populate('userId', 'name phone address'); // populate name, phone, address from user
+    .sort({ createdAt: -1 })
+    .populate('userId', 'name phone address'); // fetch user details
 
     if (!assignment) {
       return res.status(200).json({
@@ -234,7 +234,8 @@ export const getDriverAssignment = async (req, res) => {
       });
     }
 
-    const { userLocation, userId, hospitalLocation, name, phone, address } = assignment;
+    const { userLocation, userId, hospitalLocation } = assignment;
+    const { name, phone, address } = userId || {};
 
     res.status(200).json({
       success: true,
@@ -247,7 +248,6 @@ export const getDriverAssignment = async (req, res) => {
       name,
       phone,
       address,
-
     });
   } catch (error) {
     console.log(error);
@@ -258,6 +258,7 @@ export const getDriverAssignment = async (req, res) => {
     });
   }
 };
+
 
 export const getActiveSOSRequest = async (req, res) => {
   const userId = req.user._id

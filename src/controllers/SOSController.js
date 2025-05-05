@@ -251,7 +251,7 @@ export const getDriverAssignment = async (req, res) => {
       lng: userLocation.coordinates[0],
       hospitalLat: hospitalLocation.coordinates[1],
       hospitalLng: hospitalLocation.coordinates[0],
-      phone: driver.phone,
+      phone: user.phone,
       name: user.name,
       address: user.address
      

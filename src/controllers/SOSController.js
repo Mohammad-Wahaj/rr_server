@@ -223,8 +223,8 @@ export const getDriverAssignment = async (req, res) => {
       driverId,
       status: 'active'
     })
-    .sort({ createdAt: -1 })
-    .populate('userId', 'name phone address'); // fetch user details
+    .sort({ createdAt: -1 }) // latest
+    .populate('userId', 'name phone address'); // populate name, phone, address from user
 
     if (!assignment) {
       return res.status(200).json({
@@ -235,7 +235,6 @@ export const getDriverAssignment = async (req, res) => {
     }
 
     const { userLocation, userId, hospitalLocation } = assignment;
-    const { name, phone, address } = userId || {};
 
     res.status(200).json({
       success: true,
@@ -245,9 +244,9 @@ export const getDriverAssignment = async (req, res) => {
       lng: userLocation.coordinates[0],
       hospitalLat: hospitalLocation.coordinates[1],
       hospitalLng: hospitalLocation.coordinates[0],
-      name,
-      phone,
-      address,
+      phone: userId.phone,
+     
+
     });
   } catch (error) {
     console.log(error);
@@ -259,26 +258,32 @@ export const getDriverAssignment = async (req, res) => {
   }
 };
 
-
 export const getActiveSOSRequest = async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user._id
+
 
   try {
-    const existingRequest = await SOS.findOne({
-      userId: userId,
-      status: 'active',
-    })
-    .populate('driverId', 'name phone') // populate driver's name & phone
-    .populate('hospitalId', 'name') // optional: add hospital info if needed
-    .populate('userId', 'name phone address'); // optional: populate user info
+    const existingRequest = await SOS.findOne(
+      {
+        userId: userId,
+        status: 'active',
 
-    return res.status(200).json(createResponse(true, 'success', [existingRequest], ''));
+      }
+    )
+
+    
+    return res
+        .status(200)
+        .json(createResponse(true, 'success', [existingRequest], ''))
+
+
   } catch (error) {
     console.log(error);
-    return res.status(500).json(createResponse(false, 'Server error', [], error.message));
+    
+    return res.status(500).json(createResponse(true, 'Server error', [], ''))
   }
-};
 
+};
 
 export const getUsersByHospital = async (req, res) => {
   try {

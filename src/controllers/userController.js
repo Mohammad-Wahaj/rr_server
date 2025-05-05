@@ -90,6 +90,7 @@ export const login = async (req, res) => {
         name: userFound.name,
         email: userFound.email,
         userType: userFound.userType,
+        address: userFound.address,
         token: token,
       }
 
